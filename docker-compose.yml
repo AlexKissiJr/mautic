@@ -1,0 +1,35 @@
+# Docker Compose for Mautic
+
+services:
+  mautic:
+    image: mautic/mautic:latest
+    container_name: mautic
+    ports:
+      - "8080:80"
+    environment:
+      - MAUTIC_DB_HOST=db
+      - MAUTIC_DB_USER=mautic
+      - MAUTIC_DB_PASSWORD=mauticpassword
+      - MAUTIC_DB_NAME=mautic
+    volumes:
+      - mautic_data:/var/www/html
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: mautic_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mautic
+      - MYSQL_USER=mautic
+      - MYSQL_PASSWORD=mauticpassword
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  mautic_data:
+  db_data:
